@@ -62,6 +62,7 @@ always @(*) begin
             3'b010: value_o = rdata_o;                              // lw
             3'b100: value_o = {24'b0, rdata_o[7:0]};                // lbu
             3'b101: value_o = {16'b0, rdata_o[15:0]};               // lhu
+            default $finish;
         endcase
 
     end
@@ -75,6 +76,7 @@ always @(*) begin
             3'b000: byte_enable = 4'b0001;
             3'b001: byte_enable = 4'b0011;
             3'b010: byte_enable = 4'b1111;
+            default byte_enable = 4'b0000;
         endcase
     end
     2'd3: begin end

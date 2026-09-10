@@ -75,7 +75,7 @@ always @(*) begin
             manual_flag_set = 1;
 
             // çaldım
-            alu_result_o = (rs1_i[31] ^ rs2_i[31]) ? rs1_i[31] : sum[31];
+            alu_result_o = {31'b0, (rs1_i[31] ^ rs2_i[31]) ? rs1_i[31] : sum[31]};
             // eğer sign bit 1 ise negatif yani less than.
             // eğer sign bit 0 ise ve overflow varsa sıkınıtı ondan yine less than
             // tamamen ona bakıyor :))
@@ -85,7 +85,7 @@ always @(*) begin
         3'b011: begin
             // set less than    (unsigned)
             manual_flag_set = 1;
-            alu_result_o = carry_out;
+            alu_result_o = {31'b0, carry_out};
 
         end
         3'b100: begin   //xor

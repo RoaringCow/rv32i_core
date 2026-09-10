@@ -91,6 +91,7 @@ always @(*) begin
 		end
 		5'b11011: begin // zıplaa jal
 
+			rd_o = instr_i[11:7];
 			imm_o[31:20] = {12{instr_i[31]}};
 			imm_o[19:12] = instr_i[19:12];
 			imm_o[11] = instr_i[20];
@@ -101,6 +102,8 @@ always @(*) begin
 		5'b11001: begin // zıplaa jalr
 		    // aslında tepedekiyle birleştirilebilir ama bu şekilde daha belli nerede olduğu
 
+			rd_o = instr_i[11:7];
+			rs1_o = instr_i[19:15];
 			imm_o[31:11] = {21{instr_i[31]}};
 			imm_o[10:5] = instr_i[30:25];
 			imm_o[4:1] = instr_i[24:21];

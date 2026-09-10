@@ -18,43 +18,51 @@ wire        cu_rst_o;
 wire [31:0] cu_instr_o;
 wire        cu_is_imm;
 wire        cu_rf_write_enable;
-wire        cu_rf_input_select;
+wire [1:0]  cu_rf_input_select;
 wire [1:0]  cu_ls_ctrl_o;
 wire        cu_mem_req;
 wire [31:0] cu_pc_o;
 wire        cu_alu_control_override;
 wire [2:0]  cu_override_funct;
 wire        cu_branch_mode_flag;
+wire [31:0] cu_u_type_value;
 
+
+// bunların sırası karışık oldu da belki düzeltirim sonra
 control_unit cu (
-	.clk_i      (clk_i),
-	.rst_i      (rst_i),
+	.clk_i      			(clk_i),
+	.rst_i      			(rst_i),
 
-	.clk_o      (cu_clk_o),
-	.rst_o      (cu_rst_o),
+	.clk_o      			(cu_clk_o),
+	.rst_o      			(cu_rst_o),
 
-	.funct3_i     (dec_funct3),
-	.instr_type_i (dec_instr_type),
-	.instr_i    (ls_value),
-	.instr_o    (cu_instr_o),
+	.funct3_i     			(dec_funct3),
+	.instr_type_i 			(dec_instr_type),
+	.instr_i    			(ls_value),
+	.instr_o    			(cu_instr_o),
 
-	.is_imm_o         (cu_is_imm),
-	.rf_write_enable_o(cu_rf_write_enable),
-	.rf_input_select_o(cu_rf_input_select),
-	.ls_ctrl_o      (cu_ls_ctrl_o),
+	.rs1_i 					(rf_rs1_o),
 
-	.mem_valid_i  (ls_mem_valid),
-	.mem_req_o    (cu_mem_req),
+	.is_imm_o         		(cu_is_imm),
+	.rf_write_enable_o		(cu_rf_write_enable),
+	.rf_input_select_o		(cu_rf_input_select),
+	.ls_ctrl_o      		(cu_ls_ctrl_o),
 
+	.mem_valid_i  			(ls_mem_valid),
+	.mem_req_o    			(cu_mem_req),
+
+    .imm_i        			(dec_immediate),
+    .alu_result_i 			(alu_result),
 
     .alu_control_override_o (cu_alu_control_override),
     .override_funct_o       (cu_override_funct),
     .branch_mode_flag_o     (cu_branch_mode_flag),
+    .u_type_value_o(cu_u_type_value),
 
 
 
 
-	.pc_o       (cu_pc_o)
+	.pc_o       			(cu_pc_o)
 );
 
 
@@ -98,9 +106,17 @@ alu alu_i ( // isim bulamadım
 
 
 
-wire [31:0] rf_rd_input;
+reg [31:0] rf_rd_input;
 // en son koşulların doğruluğuna bak
-assign rf_rd_input = cu_rf_input_select ? ls_value : alu_result;
+always @(*) begin
+	rf_rd_input = alu_result;
+	case (cu_rf_input_select)
+		2'b00: rf_rd_input = alu_result;
+		2'b01: rf_rd_input = ls_value;
+		2'b10: rf_rd_input = cu_pc_o; 	// clocklu olduğundan herhalde değer değişmesi sorun yaratmaz
+		2'b11: rf_rd_input = cu_u_type_value;
+	endcase
+end
 
 wire [31:0] rf_rs1_o;
 wire [31:0] rf_rs2_o;
