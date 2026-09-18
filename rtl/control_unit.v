@@ -51,8 +51,7 @@ reg [31:0] program_counter;
 reg [31:0] program_counter_prev; // +4 basmadan korunmak için
 
 
-reg [31:0] pc_plus_imm;
-
+wire [31:0] pc_plus_imm;
 assign pc_plus_imm = program_counter_prev + imm_i;
 
 
@@ -248,11 +247,13 @@ always @(*) begin
 					// signed  comparison
 					3'b100, 3'b101: begin
 					override_funct_o = 3'b010; // slt signed
+					branch_mode_flag_o = 1'b1;
 					end
 
 					// unsigned comparison
 					3'b110, 3'b111: begin
 					override_funct_o = 3'b011; // slt unsigned
+					branch_mode_flag_o = 1'b1;
 					end
 
 					default $finish;

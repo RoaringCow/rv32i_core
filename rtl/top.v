@@ -1,7 +1,12 @@
 
 module top (
     input clk_i,
-    input rst_i
+    input rst_i,
+
+    output wire i2c_scl,
+    output wire i2c_sda, // şimdilik sadece output
+
+    output wire [31:0] gpio_out,
 );
 
 
@@ -197,6 +202,14 @@ loadstore_unit ls (
 
     // output
     .mem_valid(ls_mem_valid),
+
+
+    // i2c geçici
+    .i2c_scl(i2c_scl),
+    .i2c_sda(i2c_sda),
+    .gpio_out(gpio_out),
+
+
     .value_o(ls_value)
 
 

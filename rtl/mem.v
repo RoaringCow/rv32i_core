@@ -9,7 +9,9 @@ module mem(
     output reg [31:0] rdata_o
 );
 
-reg [31:0] mem [0:255]; // bu syntaxa tam aşina değilim. değişik geliyor
+reg [31:0] mem [0:4096]; // bu syntaxa tam aşina değilim. değişik geliyor
+
+initial $readmemh("derleyici/out.hex", mem);
 
 
 always @(posedge clk) begin
