@@ -200,6 +200,8 @@ loadstore_unit ls (
     .immediate_i(dec_immediate),
 
 
+
+    .mem_req(cu_mem_req),
     // output
     .mem_valid(ls_mem_valid),
 

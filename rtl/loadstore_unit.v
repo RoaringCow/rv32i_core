@@ -10,7 +10,9 @@ module loadstore_unit(
     input [31:0] rs2_i,
     input [31:0] immediate_i,
 
+    input mem_req,
     output reg mem_valid,
+
 
 
     output reg i2c_scl,
@@ -43,19 +45,16 @@ reg [3:0] byte_enable;
 // 11 boş geçsin bari
 
 always @(*) begin
-    mem_req = 0;
     byte_enable = 0;
     value_o = 32'd0;
     wdata = 32'd0;
 
     case (ls_ctrl_i)
     2'd0: begin
-        mem_req = 1;
         value_o = rdata_o;
     end
     2'd1: begin
         // buradaki hesaplamanın aşağıda gecikmesi var mıdır d:
-        mem_req = 1;
 
 
         //rv32i byte adressed olduğundan
@@ -113,7 +112,6 @@ always @(*) begin
     end
     2'd2: begin
 
-        mem_req = 1;
 
         // store için de kaydırmaçlı desteği
 
@@ -187,7 +185,6 @@ end
 
 
 
-reg mem_req;
 
 wire [31:0] rdata_o;
 
