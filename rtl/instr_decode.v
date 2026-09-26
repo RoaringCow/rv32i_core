@@ -146,6 +146,7 @@ localparam [3:0] AUIPC_TYPE =   4'd8;
 localparam [3:0] EBREAK_TYPE =  4'd9;
 localparam [3:0] ECALL_TYPE =   4'd10;
 localparam [3:0] ILLEGAL_TYPE = 4'd11;
+localparam [3:0] SYSTEM_TYPE = 4'd12;
 
 always @(*) begin
     instr_type_o = EBREAK_TYPE;
@@ -178,6 +179,8 @@ always @(*) begin
 		end
 		// ECall EBREAk
 		5'b11100:   instr_type_o = instr_i[20] ? EBREAK_TYPE : ECALL_TYPE;
+
+		5'b10011:	instr_type_o = SYSTEM_TYPE;
 
 		default begin
 		// boş şu an :O

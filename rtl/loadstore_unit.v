@@ -46,19 +46,14 @@ always @(*) begin
     mem_req = 0;
     byte_enable = 0;
     value_o = 32'd0;
-    addr = 32'd0;
     wdata = 32'd0;
 
     case (ls_ctrl_i)
     2'd0: begin
-        addr = pc_i;
         mem_req = 1;
         value_o = rdata_o;
     end
     2'd1: begin
-        // ayrı bir address generator yerine aluya almayı düşünüyorum.
-        // eğer üşenmezsem
-        addr = rs1_i + immediate_i; //addr_i;
         // buradaki hesaplamanın aşağıda gecikmesi var mıdır d:
         mem_req = 1;
 
@@ -118,7 +113,6 @@ always @(*) begin
     end
     2'd2: begin
 
-        addr = rs1_i + immediate_i;
         mem_req = 1;
 
         // store için de kaydırmaçlı desteği
@@ -168,6 +162,28 @@ always @(*) begin
     2'd3: begin end
     endcase
 end
+
+
+always @(posedge clk)begin
+    case (ls_ctrl_i)
+    2'd0: begin
+        addr = pc_i;
+    end
+    2'd1: begin
+    	// ayrı bir address generator yerine aluya almayı düşünüyorum.
+     	// eğer üşenmezsem
+        addr = rs1_i + immediate_i; //addr_i;
+    end
+    2'd2: begin
+        addr = rs1_i + immediate_i;
+    end
+    2'd3: begin
+    	addr = 32'hDEADBEEF;
+    end
+    endcase
+end
+
+
 
 
 

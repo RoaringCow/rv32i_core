@@ -6,7 +6,7 @@ module top (
     output wire i2c_scl,
     output wire i2c_sda, // şimdilik sadece output
 
-    output wire [31:0] gpio_out,
+    output wire [31:0] gpio_out
 );
 
 

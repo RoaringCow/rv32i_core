@@ -1,9 +1,9 @@
 
 int main() {
 
-	int x = 1;
-	x = 31;
-	int y = 31;
+	int x = 0x1;
+	x = 0x31;
+	int y = 0x31;
 	x = x + y;
 
 	return 0;

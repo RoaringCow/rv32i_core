@@ -9,8 +9,13 @@ module mem(
     output reg [31:0] rdata_o
 );
 
-reg [31:0] mem [0:4096]; // bu syntaxa tam aşina değilim. değişik geliyor
+reg [31:0] mem [0:4095]; // bu syntaxa tam aşina değilim. değişik geliyor
 
+
+// cocotb için
+//initial $readmemh("../derleyici/out.hex", mem);
+
+//	düz verilog testi için
 initial $readmemh("derleyici/out.hex", mem);
 
 

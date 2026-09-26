@@ -28,7 +28,7 @@ wire [31:0] instr_type = uut.dec_instr_type;
 
 
 always @(posedge clk) begin
-	$display("PC=%08h   type: %2d 	[%08h]  rd: x%02d|%08h  rs1: x%02d|%08h,   rs2: x%02d|%08h, \n", pc ,instr_type , instr, rd, rd_val, rs1, rs1_val, rs2, rs2_val);
+	$display("PC=%08h   type: %2d 	[%08h] state: %2d  | rd: x%02d|%08h  rs1: x%02d|%08h,   rs2: x%02d|%08h, ", pc ,instr_type , instr, state, rd, rd_val, rs1, rs1_val, rs2, rs2_val);
 end
 
 

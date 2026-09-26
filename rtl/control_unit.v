@@ -90,6 +90,8 @@ localparam [3:0] LUI_TYPE =     4'd7;
 localparam [3:0] AUIPC_TYPE =   4'd8;
 localparam [3:0] EBREAK_TYPE =  4'd9;
 localparam [3:0] ECALL_TYPE =   4'd10;
+localparam [3:0] ILLEGAL_TYPE = 4'd11;
+localparam [3:0] SYSTEM_TYPE = 4'd12;
 
 
 
@@ -167,6 +169,11 @@ always @(posedge clk_i or negedge rst_i) begin
                 ECALL_TYPE: begin
 
                 end
+
+                ILLEGAL_TYPE: $finish;
+
+                SYSTEM_TYPE: begin end
+
                 default: begin end
             endcase
         end
@@ -298,9 +305,10 @@ always @(*) begin
     default: begin end
     endcase
 
-
-
 end
+
+
+
 
 
 always @(*) begin
