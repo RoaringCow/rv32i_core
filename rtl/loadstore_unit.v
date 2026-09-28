@@ -9,6 +9,7 @@ module loadstore_unit(
     input [31:0] rs1_i,
     input [31:0] rs2_i,
     input [31:0] immediate_i,
+    input mem_we_i,
 
     input mem_req,
     output reg mem_valid,
@@ -56,6 +57,7 @@ always @(*) begin
     2'd1: begin
         // buradaki hesaplamanın aşağıda gecikmesi var mıdır d:
 
+        if (mem_req) begin
 
         //rv32i byte adressed olduğundan
         case (funct3)
@@ -97,6 +99,10 @@ always @(*) begin
 
         endcase
 
+        mem_valid = 1'b0;
+
+        end
+
 /*
         // riscv-testsde sorun çıkardı
         case (funct3)
@@ -114,6 +120,9 @@ always @(*) begin
 
 
         // store için de kaydırmaçlı desteği
+        //
+
+        if (mem_we_i) begin
 
 
         // geçici i2c için
@@ -155,6 +164,8 @@ always @(*) begin
 
     	end
 
+        end
+
 
     end
     2'd3: begin end
@@ -165,18 +176,18 @@ end
 always @(posedge clk)begin
     case (ls_ctrl_i)
     2'd0: begin
-        addr = pc_i;
+        addr <= pc_i;
     end
     2'd1: begin
     	// ayrı bir address generator yerine aluya almayı düşünüyorum.
      	// eğer üşenmezsem
-        addr = rs1_i + immediate_i; //addr_i;
+        addr <= rs1_i + immediate_i; //addr_i;
     end
     2'd2: begin
-        addr = rs1_i + immediate_i;
+        addr <= rs1_i + immediate_i;
     end
     2'd3: begin
-    	addr = 32'hDEADBEEF;
+    	addr <= 32'hDEADBEEF;
     end
     endcase
 end
@@ -188,11 +199,12 @@ end
 
 wire [31:0] rdata_o;
 
-
+/*
 // böyle dursun. ram anında veriyor bu durumda
 always @(posedge clk) begin
     mem_valid <= mem_req;
 end
+*/
 
 mem memory (
     .clk(clk),

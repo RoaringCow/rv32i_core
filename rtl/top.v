@@ -25,6 +25,7 @@ wire        cu_is_imm;
 wire        cu_rf_write_enable;
 wire [1:0]  cu_rf_input_select;
 wire [1:0]  cu_ls_ctrl_o;
+wire 		cu_mem_we,
 wire        cu_mem_req;
 wire [31:0] cu_pc_o;
 wire        cu_alu_control_override;
@@ -52,6 +53,8 @@ control_unit cu (
 	.rf_write_enable_o		(cu_rf_write_enable),
 	.rf_input_select_o		(cu_rf_input_select),
 	.ls_ctrl_o      		(cu_ls_ctrl_o),
+
+	.mem_we_o				(cu_mem_we),
 
 	.mem_valid_i  			(ls_mem_valid),
 	.mem_req_o    			(cu_mem_req),
@@ -198,6 +201,7 @@ loadstore_unit ls (
     .rs1_i(rf_rs1_o),
     .rs2_i(rf_rs2_o),
     .immediate_i(dec_immediate),
+    .mem_we_i(cu_mem_we),
 
 
 

@@ -24,6 +24,8 @@ module control_unit (
     output reg [1:0] rf_input_select_o, // 0 is alu, 1 is ls, 2 is PC, 3 PC + imm olsun yer var zaten
 
 
+    output reg mem_we_o,
+
     input mem_valid_i,
     output reg mem_req_o,
 
@@ -130,7 +132,7 @@ always @(posedge clk_i or negedge rst_i) begin
             instr_state <= EX;
         end
         EX: begin
-        	instr_state <= WB;
+        	instr_state <= IF; // default olarak oluyor mu bir şüphelendim.
             case (instr_type_i)
                 R_ALU_TYPE: begin
                 end
@@ -152,9 +154,13 @@ always @(posedge clk_i or negedge rst_i) begin
                 // donanıma yakın son tasarım yaparsam bunları tek adderda inputları değiştirerek yapacam.
                 JAL_TYPE: begin
                 	program_counter <= pc_plus_imm;
+
+                 	instr_state <= IF;
                 end
                 JALR_TYPE: begin
                		program_counter <= rs1_i + imm_i;
+
+                 	instr_state <= IF;
 
                 end
                 LUI_TYPE: begin
@@ -179,10 +185,21 @@ always @(posedge clk_i or negedge rst_i) begin
         end
         MEM: begin
         	instr_state <= WB;
+         	case (instr_type_i)
+             	LOAD_TYPE: begin
+            		if (mem_valid_i) instr_state <= IF;
+              		else	instr_state <= MEM
+
+              end
+
+              	end
+            endcase
         end
+        /*
         WB: begin
       		instr_state <= IF;
         end
+        */
 
         default: begin end
 
@@ -236,9 +253,8 @@ always @(*) begin
             end
             LOAD_TYPE: begin
             	is_imm_o = 1;
-            	rf_input_select_o = 1;
-             	ls_ctrl_o = 2'b01;
-             	rf_write_enable_o = 1;
+            	ls_ctrl_o = 2'b01;
+              	mem_req_o = 1'b1;
             end
             BRANCH_TYPE: begin
 				alu_control_override_o = 1;
@@ -298,8 +314,28 @@ always @(*) begin
             end
         endcase
     end
-    MEM: begin end
-    WB: begin end
+    MEM: begin
+        rf_write_enable_o = 0;
+        case (instr_type_i)
+            STORE_TYPE: begin
+              // ----------------------------------------------------------------------------------------------------
+              // 			"store"da karşı tarafın onayı zart zurt için olabilir belki de o da farklı bir kanaldan mı olur.
+              // ----------------------------------------------------------------------------------------------------
+             	//mem_req_o = 1'b1;
+            end
+            LOAD_TYPE: begin
+              	mem_req_o = 1'b1;
+              	ls_ctrl_o = 2'b01;
+            end
+            default: begin
+            end
+        endcase
+    end
+    WB: begin
+
+   		rf_input_select_o = 1;
+    	rf_write_enable_o = 1;
+    end
 
 
     default: begin end

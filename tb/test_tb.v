@@ -40,7 +40,7 @@ initial begin
     #12;
     rst = 1;
 
-    #2000;
+    #3000;
     $finish;
 end
 
