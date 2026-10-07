@@ -1,10 +1,14 @@
+#include <stdint.h>
+
+void i2c_start();
+void i2c_stop();
+void i2c_send(uint8_t byte);
 
 int main() {
-
-	int x = 0x1;
-	x = 0x31;
-	int y = 0x31;
-	x = x + y;
-
-	return 0;
+    i2c_start();
+    i2c_send(0xA0); // device address (write)
+    i2c_send(0x00); // register
+    i2c_send(0x42); // data
+    i2c_stop();
+    return 0;
 }

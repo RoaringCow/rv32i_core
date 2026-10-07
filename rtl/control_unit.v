@@ -176,7 +176,7 @@ always @(posedge clk_i or negedge rst_i) begin
 
                 end
 
-                ILLEGAL_TYPE: $finish;
+                ILLEGAL_TYPE: begin end //$finish;
 
                 SYSTEM_TYPE: begin end
 
@@ -187,19 +187,14 @@ always @(posedge clk_i or negedge rst_i) begin
         	instr_state <= WB;
          	case (instr_type_i)
              	LOAD_TYPE: begin
-            		if (mem_valid_i) instr_state <= IF;
-              		else	instr_state <= MEM
-
-              end
-
+            		if (mem_valid_i) instr_state <= WB;
+              		else	instr_state <= MEM;
               	end
             endcase
         end
-        /*
         WB: begin
       		instr_state <= IF;
         end
-        */
 
         default: begin end
 
@@ -224,6 +219,9 @@ always @(*) begin
     override_funct_o = 3'b0;
     branch_mode_flag_o = 1'b0;
     u_type_value_o = 0;
+
+
+   	mem_we_o = 0;
 
 
 
@@ -322,9 +320,11 @@ always @(*) begin
               // 			"store"da karşı tarafın onayı zart zurt için olabilir belki de o da farklı bir kanaldan mı olur.
               // ----------------------------------------------------------------------------------------------------
              	//mem_req_o = 1'b1;
+              	mem_we_o = 1;
+              	ls_ctrl_o = 2'b10;
             end
             LOAD_TYPE: begin
-              	mem_req_o = 1'b1;
+               	mem_req_o = 1'b1;
               	ls_ctrl_o = 2'b01;
             end
             default: begin
@@ -333,8 +333,33 @@ always @(*) begin
     end
     WB: begin
 
+
+
+        // buradaki random we'ı düzeltmem gerek sonra
+        //
    		rf_input_select_o = 1;
     	rf_write_enable_o = 1;
+
+        // denemelik fetch için
+        mem_req_o = 1'b0;
+        // ya neyse eğer buyruk WB'e geliyorsa 2 fetchten kurtuluyor (hayıur).
+        // KURTULMUYO sadece fetchi bozuyo
+        //
+
+        // default
+        ls_ctrl_o = 2'b00;
+       	mem_we_o = 0;
+
+
+
+        case (instr_type_i)
+            STORE_TYPE: begin // yazım için addresler korunsun.
+              	mem_we_o = 0;
+              	ls_ctrl_o = 2'b10;
+            end
+            default: begin
+            end
+        endcase
     end
 
 

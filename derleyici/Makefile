@@ -5,8 +5,8 @@ CFLAGS  = -march=rv32i -mabi=ilp32 -nostdlib -T link.ld
 
 all: out.hex out.asm
 
-out.elf: crt0.S main.c link.ld
-	$(CC) $(CFLAGS) -o $@ crt0.S main.c
+out.elf: crt0.S main.c i2c.c link.ld
+	$(CC) $(CFLAGS) -o $@ crt0.S main.c i2c.c
 
 out.hex: out.elf
 	$(OBJCOPY) -O binary $< out.bin

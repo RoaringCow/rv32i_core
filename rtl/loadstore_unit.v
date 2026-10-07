@@ -1,4 +1,4 @@
-
+/*
 
 module loadstore_unit(
     input clk,
@@ -99,10 +99,11 @@ always @(*) begin
 
         endcase
 
-        mem_valid = 1'b0;
+        mem_valid = 1'b1
 
         end
 
+        */
 /*
         // riscv-testsde sorun çıkardı
         case (funct3)
@@ -115,6 +116,8 @@ always @(*) begin
         endcase
         */
 
+
+/*
     end
     2'd2: begin
 
@@ -199,12 +202,10 @@ end
 
 wire [31:0] rdata_o;
 
-/*
 // böyle dursun. ram anında veriyor bu durumda
 always @(posedge clk) begin
     mem_valid <= mem_req;
 end
-*/
 
 mem memory (
     .clk(clk),
@@ -219,3 +220,5 @@ mem memory (
 
 
 endmodule
+
+*/

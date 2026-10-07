@@ -25,7 +25,7 @@ wire        cu_is_imm;
 wire        cu_rf_write_enable;
 wire [1:0]  cu_rf_input_select;
 wire [1:0]  cu_ls_ctrl_o;
-wire 		cu_mem_we,
+wire 		cu_mem_we;
 wire        cu_mem_req;
 wire [31:0] cu_pc_o;
 wire        cu_alu_control_override;
@@ -191,7 +191,7 @@ instr_decode decoder (
 wire ls_mem_valid;
 wire [31:0] ls_value;
 
-loadstore_unit ls (
+loadstore_unit_new ls (
 	// input
     .clk(clk_i),
     .pc_i(cu_pc_o),

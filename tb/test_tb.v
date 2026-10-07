@@ -5,12 +5,19 @@ module test_tb;
 reg clk;
 reg rst;
 
+wire i2c_scl;
+wire i2c_sda;
+wire [31:0] gpio_out;
+
 initial clk = 0;
 always #5 clk = ~clk;
 
 top uut (
     .clk_i(clk),
-    .rst_i(rst)
+    .rst_i(rst),
+    .i2c_scl(i2c_scl),
+    .i2c_sda(i2c_sda),
+    .gpio_out(gpio_out)
 );
 
 
@@ -28,7 +35,7 @@ wire [31:0] instr_type = uut.dec_instr_type;
 
 
 always @(posedge clk) begin
-	$display("PC=%08h   type: %2d 	[%08h] state: %2d  | rd: x%02d|%08h  rs1: x%02d|%08h,   rs2: x%02d|%08h, ", pc ,instr_type , instr, state, rd, rd_val, rs1, rs1_val, rs2, rs2_val);
+	//$display("PC=%08h   type: %2d 	[%08h] state: %2d  | rd: x%02d|%08h  rs1: x%02d|%08h,   rs2: x%02d|%08h, ", pc ,instr_type , instr, state, rd, rd_val, rs1, rs1_val, rs2, rs2_val);
 end
 
 
@@ -40,7 +47,8 @@ initial begin
     #12;
     rst = 1;
 
-    #3000;
+    //#2000;
+    #200000000;
     $finish;
 end
 
