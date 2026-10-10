@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <sys/types.h>
 
 
 #define SCL 0x4000000
@@ -15,7 +14,8 @@ void i2c_send(uint8_t byte);
 static void delay_ns(uint32_t n);
 
 
-#define count 100 // salladım
+//#define count 10000000 // salladım
+#define count 1000 // salladım
 
 
 //delayleri random atacam böyle bitbanging.space'te böyle yapmış
@@ -56,16 +56,19 @@ void i2c_send(uint8_t byte) {
 	}
 
 	SDA_WRITE(1);
+	delay_ns(count);
 	SCL_WRITE(1);
 	delay_ns(count);
 	SCL_WRITE(0);
+	delay_ns(count);
 
 }
 
 
 
 
+// hedef ns di ama şu an clock
 static void delay_ns(uint32_t n) {
-    for (uint32_t i = 0; i < count; i++)
+    for (uint32_t i = 0; i < n; i++)
         __asm__ volatile ("nop");
 }
