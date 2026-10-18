@@ -80,66 +80,95 @@ end
 
 
 
-always @(posedge clk) begin
-    byte_enable <= 4'b0000; // bilim için
+always@(*) begin
+	mem_valid = mem_valid_o;
 
-	if (!mem_req) mem_valid <= 0;
+	case (ls_ctrl_i)
+	2'd0: begin
+		if (mem_valid_o) begin
+			value_o = rdata_o; // bağlı gibi olsun da.
+		end
 
-    case (ls_ctrl_i)
-    2'd0: begin
-    	if (mem_req) begin
-     		value_o <= rdata_o;
-       		mem_valid <= 1;
-     	end
-    end
-    2'd1: begin
-        // buradaki hesaplamanın aşağıda gecikmesi var mıdır d:
+	end
+	2'd1:begin
 
-        if (mem_req) begin
+		/*
+        // video ram okumaca
+        if (addr >= 50000000) begin
+            value_o = video_rdata_o;
+
+        end else
+        */
+
+        if (mem_valid_o) begin
 
         //rv32i byte adressed olduğundan
         case (funct3)
         	// lb
         	3'b000: case(addr[1:0])
-         		2'b00: value_o <= {{24{rdata_o[7]}},  rdata_o[7:0]};
-         		2'b01: value_o <= {{24{rdata_o[15]}},  rdata_o[15:8]};
-         		2'b10: value_o <= {{24{rdata_o[23]}},  rdata_o[23:16]};
-         		2'b11: value_o <= {{24{rdata_o[31]}},  rdata_o[31:24]};
+         		2'b00: value_o = {{24{rdata_o[7]}},  rdata_o[7:0]};
+         		2'b01: value_o = {{24{rdata_o[15]}},  rdata_o[15:8]};
+         		2'b10: value_o = {{24{rdata_o[23]}},  rdata_o[23:16]};
+         		2'b11: value_o = {{24{rdata_o[31]}},  rdata_o[31:24]};
            	endcase
 
             //lbu
            	// bunlar birleşirdi de böyle daha güzel
            	3'b100: case(addr[1:0])
-          		2'b00: value_o <= {{24'b0},  rdata_o[7:0]};
-          		2'b01: value_o <= {{24'b0},  rdata_o[15:8]};
-          		2'b10: value_o <= {{24'b0},  rdata_o[23:16]};
-          		2'b11: value_o <= {{24'b0},  rdata_o[31:24]};
+          		2'b00: value_o = {{24'b0},  rdata_o[7:0]};
+          		2'b01: value_o = {{24'b0},  rdata_o[15:8]};
+          		2'b10: value_o = {{24'b0},  rdata_o[23:16]};
+          		2'b11: value_o = {{24'b0},  rdata_o[31:24]};
          	endcase
 
           //lh
          	3'b001: case(addr[1])
-          		1'b0: value_o <= {{16{rdata_o[15]}},  rdata_o[15:0]};
-          		1'b1: value_o <= {{16{rdata_o[31]}},  rdata_o[31:16]};
+          		1'b0: value_o = {{16{rdata_o[15]}},  rdata_o[15:0]};
+          		1'b1: value_o = {{16{rdata_o[31]}},  rdata_o[31:16]};
             	endcase
 
             //lhu
            	3'b101: case(addr[1])
-          		1'b0: value_o <= {{16'b0},  rdata_o[15:0]};
-          		1'b1: value_o <= {{16'b0},  rdata_o[31:16]};
+          		1'b0: value_o = {{16'b0},  rdata_o[15:0]};
+          		1'b1: value_o = {{16'b0},  rdata_o[31:16]};
           	endcase
 
            // lw
            	3'b010: begin
-            	value_o <= rdata_o;                              // lw
+            	value_o = rdata_o;                              // lw
             end
 
             default $finish;
 
         endcase
 
-        mem_valid <= 1'b1;
-
         end
+
+	end
+	default: begin end
+	endcase
+
+end
+
+
+
+
+always @(posedge clk) begin
+    byte_enable <= 4'b0000; // bilim için
+
+    case (ls_ctrl_i)
+    2'd0: begin
+    	/*
+    	if (mem_req) begin
+     		value_o <= rdata_o;
+       		mem_valid <= 1;
+     	end
+      	*/
+    end
+    2'd1: begin
+        // buradaki hesaplamanın aşağıda gecikmesi var mıdır d:
+        //
+
 
         /*
         // riscv-testsde sorun çıkardı
@@ -230,19 +259,34 @@ reg [3:0] byte_enable;
 
 wire [31:0] rdata_o;
 
-
+wire mem_valid_o;
 
 mem memory (
     .clk(clk),
     .addr_i(mem_addr),
     .wdata_i(wdata),
     .byte_enable_i(byte_enable),
+    .mem_req(mem_req),
+
+    .mem_valid(mem_valid_o),
 
     .rdata_o(rdata_o)
 );
 
 
 
+/*
+wire [31:0] video_rdata_o;
+
+video_mem video_memory (
+    .clk(clk),
+    .addr_i(mem_addr),
+    .wdata_i(wdata),
+    .byte_enable_i(byte_enable),
+
+    .rdata_o(video_rdata_o)
+);
+*/
 
 
 

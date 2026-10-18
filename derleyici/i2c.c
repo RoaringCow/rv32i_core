@@ -15,7 +15,7 @@ static void delay_ns(uint32_t n);
 
 
 //#define count 10000000 // salladım
-#define count 1000 // salladım
+#define count 1  // fpga yetişir mi bilmem
 
 
 //delayleri random atacam böyle bitbanging.space'te böyle yapmış

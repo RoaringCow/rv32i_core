@@ -357,6 +357,9 @@ always @(*) begin
               	mem_we_o = 0;
               	ls_ctrl_o = 2'b10;
             end
+            LOAD_TYPE: begin
+              	ls_ctrl_o = 2'b01;
+            end
             default: begin
             end
         endcase

@@ -1,41 +1,56 @@
 #include <stdint.h>
 
 #include "oled_driver/ssd1306.h"
+#include "frames.h"
 
 void i2c_start();
 void i2c_stop();
 void i2c_send(uint8_t byte);
-
-
 
 static void delay_clock(uint32_t n) {
     for (uint32_t i = 0; i < n; i++)
         __asm__ volatile ("nop");
 }
 
+static void draw_frame(const uint32_t *frame) {
+    SSD1306_ClearScreen();
+    int i = 0;
+    for (int y = 0; y < FRAME_H; y++) {
+        int x = 0;
+        for (int word = 0; word < 4; word++) {
+            uint32_t w = frame[i++];
+            uint32_t mask = 0x80000000;  // MSB 0b1000..00; soldan sağa taramaca.
+            while (mask) {
+                if (w & mask)
+                    SSD1306_DrawPixel(x, y);
+                x++;
+                mask >>= 1;
+            }
+        }
+    }
+    SSD1306_UpdateScreen(SSD1306_ADDR);
+}
 
 int main() {
 
-	SSD1306_Init (SSD1306_ADDR);                                    // 0x3C
+	/*
+	int x = 0xdeadbeef;
+	int y = x;
 
-	// DRAWING
-	// -------------------------------------------------------------------------------------
-	SSD1306_ClearScreen ();                                         // clear screen
-	SSD1306_DrawLine (0, MAX_X, 4, 4);                              // draw line
-	SSD1306_SetPosition (7, 1);                                     // set position
-	SSD1306_DrawString ("Turi ip ip ip");                     // draw string
-	SSD1306_DrawLine (0, MAX_X, 18, 18);                            // draw line
-	SSD1306_SetPosition (40, 3);                                    // set position
-	SSD1306_DrawString ("ip ip");                                // draw string
-	SSD1306_SetPosition (53, 5);                                    // set position
-	SSD1306_UpdateScreen (SSD1306_ADDR);                            // update
+	while (1) {
+		y++;
+		x = y;
+	}
+ */
 
-	delay_clock (1000);
-	SSD1306_InverseScreen (SSD1306_ADDR);
+    SSD1306_Init(SSD1306_ADDR);
 
-	delay_clock (1000);
-	SSD1306_NormalScreen (SSD1306_ADDR);
-
+    while (1) {
+        for (int f = 0; f < NUM_FRAMES; f++) {
+            draw_frame(frames[f]);
+            delay_clock(0000);
+        }
+    }
 
     return 0;
 }
