@@ -50,21 +50,13 @@ The path is currently set for my own machine.
 Make sure you have Verilator and a RISC-V GCC toolchain (e.g. `riscv32-unknown-elf-gcc`) installed.
 Bad apple is only set up to run with the fpga so for now running with verilator has no purpose. It just runs C programs and prints out debug data from `test_tb.v`.
 
+**Also the main file currently contains the code to run the oled display. So you might to remove all code except a fresh main function**
 
 ```bash
 git clone https://github.com/RoaringCow/rv32i_core.git
 cd rv32i_core
 
-
-cd video
-mkdir frames
-ffmpeg -ss 0 -i badapple.mp4 -t 20 -vf "fps=12,scale=128:64" -c:v libx264 -crf 18 -an output.mp4
-ffmpeg -ss 0 -i output.mp4 -t 20 -vf fps=12 frames/%03d.png
-python3 frames_to_header.py
-
-cd ..
 ./run.sh
-
 ```
 
 ## Running on FPGA (using vivado)
