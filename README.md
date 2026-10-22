@@ -12,6 +12,8 @@ https://github.com/user-attachments/assets/8bce3da7-4b10-469b-9576-9e8ff0fb2bd2
 
 
 Sound is edited in.
+The video is only 20 seconds because the BRAM is at %95 usage.
+I could have implemented xor delta encoding but there is no need. (it would be around 40s so still not the whole video)
 
 
 ## Supported instructions
