@@ -6,8 +6,12 @@ A multicycle (not pipelined) RV32I core written in Verilog from scratch.
 This is currently the highlight of the project as i wanted to show what it could do in a real fpga. So here it is playing Bad Apple on an i2c oled display:
 
 
-![Bad Apple running on the core](docs/badapple.gif)
 
+
+https://github.com/user-attachments/assets/8bce3da7-4b10-469b-9576-9e8ff0fb2bd2
+
+
+Sound is edited in.
 
 
 ## Supported instructions
