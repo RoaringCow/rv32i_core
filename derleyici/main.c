@@ -48,7 +48,7 @@ int main() {
     while (1) {
         for (int f = 0; f < NUM_FRAMES; f++) {
             draw_frame(frames[f]);
-            delay_clock(0000);
+            delay_clock(63000); // bu civarda bir şey. tam olmadı da
         }
     }
 
